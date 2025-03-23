@@ -1,6 +1,5 @@
 <?php
-include 'ghotels.php';
-
+include 'db.php';
 ?>
 
 <!DOCTYPE html>
@@ -8,7 +7,7 @@ include 'ghotels.php';
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Register</title>
+    <title>Register - Rooms & Packages</title>
     <link href="css/styles.css" rel="stylesheet">
     <style>
         body {
@@ -54,46 +53,22 @@ include 'ghotels.php';
         }
     </style>
     <script>
-    const hotelRooms = <?php echo json_encode(array_column($goa_packages, 'rooms', 'name')); ?>;
-
-    function updateRoomOptions() {
-        const hotelSelect = document.getElementById("hotel");
-        const roomSelect = document.getElementById("room");
-        const selectedHotel = hotelSelect.value;
-
-        // Clear previous options
-        roomSelect.innerHTML = "<option value=''>-- Select Room Type --</option>";
-
-        if (selectedHotel && hotelRooms[selectedHotel]) {
-            hotelRooms[selectedHotel].forEach(room => {
-                const option = document.createElement("option");
-                option.value = room['type'];
-                option.textContent = room['type'];
-                roomSelect.appendChild(option);
-            });
-        }
-    }
-
     function showSuccessMessage(event) {
-        event.preventDefault(); // Prevent form submission
-
+        event.preventDefault();
         const message = document.getElementById('success-message');
         message.style.display = 'block';
-
-        // Redirect after 2-3 seconds
         setTimeout(() => {
             window.location.href = 'confirm_booking.php';
-        }, 2500); // 2.5 seconds delay
+        }, 2500);
     }
-</script>
-
+    </script>
 </head>
 <body>
     <div class="form-container">
-        <h2>Register</h2>
+        <h2>Register for Rooms & Packages</h2>
         <form method="POST" action="process_registration.php" onsubmit="showSuccessMessage(event)">
             <div class="form-group">
-                <label for="name">Name</label>
+                <label for="name">Full Name</label>
                 <input type="text" id="name" name="name" required>
             </div>
             <div class="form-group">
@@ -109,45 +84,39 @@ include 'ghotels.php';
                 <input type="date" id="dob" name="dob" required>
             </div>
             <div class="form-group">
-                <label for="country">Country</label>
-                <select id="country" name="country" required>
-                    <option value="">-- Select Country --</option>
-                    <option value="India">India</option>
-                    <option value="United States">United States</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="Australia">Australia</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Germany">Germany</option>
-                    <option value="France">France</option>
-                    <option value="Singapore">Singapore</option>
-                    <option value="Japan">Japan</option>
-                    <option value="Brazil">Brazil</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="packages">Choose a Package</label>
-                <select id="packages" name="packages" required>
-                    <option value="">-- Select Package --</option>
-                    <option value="Goa Bliss Retreat">Goa Bliss Retreat,22,000</option>
-                    <option value="Golden Sands Escape">Golden Sands Escape,32,000</option>
-                    <option value="Tropical Adventure">Tropical Adventure,16,000</option>
-                    <option value="Ultimate Goa Experience">Ultimate Goa Experience,55,000</option>
-                    <option value="Sunset Weekend Special">Sunset Weekend Special,9000</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="hotel">Choose a Hotel</label>
-                <select id="hotel" name="hotel" required onchange="updateRoomOptions()">
+                <label for="hotel">Hotel Name</label>
+                <select id="hotel" name="hotel" required>
                     <option value="">-- Select Hotel --</option>
-                    <?php foreach ($goa_packages as $package): ?>
-                        <option value="<?php echo $package['name']; ?>"><?php echo $package['name']; ?></option>
-                    <?php endforeach; ?>
+                    <?php 
+                    $hotels = mysqli_query($conn, "SELECT * FROM hotels");
+                    while ($hotel = mysqli_fetch_assoc($hotels)) {
+                        echo "<option value='{$hotel['id']}'>{$hotel['name']}</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="package">Package</label>
+                <select id="package" name="package" required>
+                    <option value="">-- Select Package --</option>
+                    <?php 
+                    $packages = mysqli_query($conn, "SELECT * FROM packages");
+                    while ($package = mysqli_fetch_assoc($packages)) {
+                        echo "<option value='{$package['id']}'>{$package['title']} - ₹{$package['price']}</option>";
+                    }
+                    ?>
                 </select>
             </div>
             <div class="form-group">
                 <label for="room">Room Type</label>
                 <select id="room" name="room" required>
                     <option value="">-- Select Room Type --</option>
+                    <?php 
+                    $rooms = mysqli_query($conn, "SELECT * FROM rooms");
+                    while ($room = mysqli_fetch_assoc($rooms)) {
+                        echo "<option value='{$room['id']}'>{$room['type']} - ₹{$room['price']} per night</option>";
+                    }
+                    ?>
                 </select>
             </div>
             <div class="form-group">

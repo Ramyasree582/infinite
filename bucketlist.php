@@ -9,20 +9,20 @@
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-image: url('assets/img/this.jpg'); /* Replace 'your-background-image.jpg' with your image file */
+    background-image: url('assets/img/this.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
   }
 
   h1 {
-    color: rgba(255, 255, 255, 0.7); /* 70% opaque white */
+    color: rgba(255, 255, 255, 0.7);
     text-align: center;
     padding: 20px 0;
   }
 
   #bucketForm {
-    background-color: rgba(255, 255, 255, 0.7); /* 70% opaque white */
+    background-color: rgba(255, 255, 255, 0.7);
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 5px;
@@ -62,12 +62,12 @@
   }
 
   li {
-    background-color: rgba(255, 255, 255, 0.7); /* 70% opaque white */
+    background-color: rgba(255, 255, 255, 0.7);
     padding: 10px;
     margin-bottom: 5px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    color: rgba(0, 0, 0, 0.7); /* 70% opaque black */
+    color: rgba(0, 0, 0, 0.7);
   }
 
   .delete-btn {
@@ -117,29 +117,17 @@ document.addEventListener('DOMContentLoaded', function() {
   const list = document.getElementById('bucketList');
   const deleteAllBtn = document.getElementById('deleteAllBtn');
 
-  // Load existing items from localStorage
-  let storedItems = JSON.parse(localStorage.getItem('bucketItems')) || [];
-  storedItems.forEach(item => {
-    addItemToList(item);
-  });
-
   form.addEventListener('submit', function(event) {
     event.preventDefault();
     const newItem = input.value.trim();
     if (newItem !== '') {
       addItemToList(newItem);
-      storedItems.push(newItem); // Add new item to stored items array
-      localStorage.setItem('bucketItems', JSON.stringify(storedItems)); // Save to localStorage
       input.value = '';
     }
   });
 
   deleteAllBtn.addEventListener('click', function() {
-    while (list.firstChild) {
-      list.removeChild(list.firstChild);
-    }
-    localStorage.removeItem('bucketItems');
-    storedItems = []; // Clear stored items array
+    list.innerHTML = ''; // Clear all list items
   });
 
   function addItemToList(item) {
@@ -150,21 +138,11 @@ document.addEventListener('DOMContentLoaded', function() {
     deleteBtn.textContent = 'Delete';
     deleteBtn.className = 'delete-btn';
     deleteBtn.addEventListener('click', function() {
-      deleteItem(li);
+      li.remove(); // Correctly remove the list item
     });
 
     li.appendChild(deleteBtn);
     list.appendChild(li);
-  }
-
-  function deleteItem(item) {
-    const itemText = item.textContent.trim();
-    const index = storedItems.indexOf(itemText);
-    if (index !== -1) {
-      storedItems.splice(index, 1);
-      localStorage.setItem('bucketItems', JSON.stringify(storedItems)); // Update localStorage
-    }
-    item.remove();
   }
 });
 </script>

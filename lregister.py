@@ -1,6 +1,5 @@
 <?php
-include 'ghotels.php';
-
+include 'lhotels.php';
 ?>
 
 <!DOCTYPE html>
@@ -54,14 +53,13 @@ include 'ghotels.php';
         }
     </style>
     <script>
-    const hotelRooms = <?php echo json_encode(array_column($goa_packages, 'rooms', 'name')); ?>;
+    const hotelRooms = <?php echo json_encode(array_column($ladakh_packages, 'rooms', 'name')); ?>;
 
     function updateRoomOptions() {
         const hotelSelect = document.getElementById("hotel");
         const roomSelect = document.getElementById("room");
         const selectedHotel = hotelSelect.value;
 
-        // Clear previous options
         roomSelect.innerHTML = "<option value=''>-- Select Room Type --</option>";
 
         if (selectedHotel && hotelRooms[selectedHotel]) {
@@ -75,18 +73,14 @@ include 'ghotels.php';
     }
 
     function showSuccessMessage(event) {
-        event.preventDefault(); // Prevent form submission
-
+        event.preventDefault();
         const message = document.getElementById('success-message');
         message.style.display = 'block';
-
-        // Redirect after 2-3 seconds
         setTimeout(() => {
             window.location.href = 'confirm_booking.php';
-        }, 2500); // 2.5 seconds delay
+        }, 2500);
     }
-</script>
-
+    </script>
 </head>
 <body>
     <div class="form-container">
@@ -128,18 +122,17 @@ include 'ghotels.php';
                 <label for="packages">Choose a Package</label>
                 <select id="packages" name="packages" required>
                     <option value="">-- Select Package --</option>
-                    <option value="Goa Bliss Retreat">Goa Bliss Retreat,22,000</option>
-                    <option value="Golden Sands Escape">Golden Sands Escape,32,000</option>
-                    <option value="Tropical Adventure">Tropical Adventure,16,000</option>
-                    <option value="Ultimate Goa Experience">Ultimate Goa Experience,55,000</option>
-                    <option value="Sunset Weekend Special">Sunset Weekend Special,9000</option>
+                    <option value="Pangong Lake Retreat">Pangong Lake Retreat, ₹7500</option>
+                    <option value="Leh Grand Hotel">Leh Grand Hotel, ₹5500</option>
+                    <option value="Nubra Valley Camp">Nubra Valley Camp, ₹6800</option>
+                    <option value="Zanskar Retreat">Zanskar Retreat, ₹7200</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="hotel">Choose a Hotel</label>
                 <select id="hotel" name="hotel" required onchange="updateRoomOptions()">
                     <option value="">-- Select Hotel --</option>
-                    <?php foreach ($goa_packages as $package): ?>
+                    <?php foreach ($ladakh_packages as $package): ?>
                         <option value="<?php echo $package['name']; ?>"><?php echo $package['name']; ?></option>
                     <?php endforeach; ?>
                 </select>
